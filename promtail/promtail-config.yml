@@ -1,0 +1,39 @@
+server:
+  http_listen_port: 9080
+  grpc_listen_port: 0
+
+positions:
+  filename: /tmp/positions.yaml
+
+clients:
+  - url: http://cv-loki:3100/loki/api/v1/push
+
+scrape_configs:
+  - job_name: docker-logs
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: docker
+          __path__: /var/lib/docker/containers/*/*.log
+  - job_name: docker-sd
+    docker_sd_configs:
+      - host: unix:///var/run/docker.sock
+        refresh_interval: 10s
+
+    # Tell promtail which container logfile to read (from the discovered container id)
+    relabel_configs:
+      # set the scraped file path for each discovered container by its container id
+      - source_labels: ['__meta_docker_container_id']
+        regex: '(.*)'
+        replacement: '/var/lib/docker/containers/$1/$1-json.log'
+        target_label: '__path__'
+
+      # attach container name as a label (e.g. "/cv-backend" -> "cv-backend")
+      - source_labels: ['__meta_docker_container_name']
+        regex: '/?(.*)'
+        target_label: 'container'
+
+      # keep container id as its own label as well
+      - source_labels: ['__meta_docker_container_id']
+        target_label: 'container_id'

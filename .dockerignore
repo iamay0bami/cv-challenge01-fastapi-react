@@ -1,0 +1,11 @@
+# .dockerignore (repo root)
+.git
+.vscode
+node_modules
+dist
+build
+__pycache__
+*.pyc
+.env
+.env.*
+*.log
