@@ -1,0 +1,11 @@
+# Local secret envs
+backend/.env
+frontend/.env
+.env
+
+# positions / runtime
+promtail/positions.yaml
+grafana/storage/
+loki/wal/
+loki/index/
+loki/chunks/
