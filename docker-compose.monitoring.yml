@@ -1,0 +1,80 @@
+version: "3.8"
+
+networks:
+  monitoring:
+    driver: bridge
+  shared_net:
+    external: true
+
+volumes:
+  prometheus_data: {}
+  grafana_data: {}
+  loki_data: {}
+
+services:
+  cv-prometheus:
+    image: prom/prometheus:latest
+    container_name: cv-prometheus
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    networks:
+      - monitoring
+      - shared_net
+
+  cv-grafana:
+    image: grafana/grafana:latest
+    container_name: cv-grafana
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_PROVISIONING_PATH=/etc/grafana/provisioning
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./grafana/dashboards:/var/lib/grafana/dashboards:ro
+    ports:
+      - "3000:3000"
+    networks:
+      - monitoring
+      - shared_net
+
+  cv-loki:
+    image: grafana/loki:2.9.0
+    container_name: cv-loki
+    command: -config.file=/etc/loki/config.yml
+    volumes:
+      - ./loki/config.yml:/etc/loki/config.yml:ro
+      - ./loki:/loki
+      - ./loki/wal:/wal
+    ports:
+      - "3100:3100"
+    networks:
+      - monitoring
+      - shared_net
+
+  cv-promtail:
+    image: grafana/promtail:2.9.0
+    container_name: cv-promtail
+    command: -config.file=/etc/promtail/promtail-config.yml
+    volumes:
+      - ./promtail/promtail-config.yml:/etc/promtail/promtail-config.yml:ro
+      - /var/log:/var/log
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - monitoring
+      - shared_net
+
+  cv-cadvisor:
+    image: gcr.io/cadvisor/cadvisor:latest
+    container_name: cv-cadvisor
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+    networks:
+      - monitoring
+      - shared_net
+    restart: unless-stopped

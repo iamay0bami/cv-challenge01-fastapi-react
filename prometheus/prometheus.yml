@@ -1,0 +1,22 @@
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+  - job_name: "prometheus"
+    static_configs:
+      - targets: ["cv-prometheus:9090"]
+
+  - job_name: "cadvisor"
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ["cv-cadvisor:8080"]
+
+  - job_name: "app_backend"
+    metrics_path: /metrics
+    static_configs:
+      - targets: ["cv-backend:8000"]
+
+  # Optional: if you want to scrape frontend (static site has no Prometheus metrics by default)
+  # - job_name: "app_frontend"
+  #   static_configs:
+  #     - targets: ["cv-frontend:80"]

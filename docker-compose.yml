@@ -1,0 +1,68 @@
+services:
+  cv-backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: cv-backend
+    expose:
+      - "8000"   # only expose to other containers
+    env_file:
+      - ./backend/.env
+    depends_on:
+      - cv-db
+    networks:
+      - default
+      - shared_net
+
+  cv-frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: cv-frontend
+    expose:
+      - "80"
+    depends_on:
+      - cv-backend
+    networks:
+      - default
+      - shared_net
+
+  cv-db:
+    image: postgres:14
+    container_name: cv-db
+    environment:
+      POSTGRES_USER: app
+      POSTGRES_PASSWORD: changethis123
+      POSTGRES_DB: app
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  cv-adminer:
+    image: adminer
+    container_name: cv-adminer
+    ports:
+      - "8080:8080"
+    depends_on:
+      - cv-db
+
+  cv-nginx:
+    image: nginx:alpine
+    container_name: cv-nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - cv-frontend
+      - cv-backend
+    networks:
+      - default
+      - shared_net
+
+volumes:
+  postgres_data:
+
+networks:
+  shared_net:
+    external: true
+      
