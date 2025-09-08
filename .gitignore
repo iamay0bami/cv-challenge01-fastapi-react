@@ -9,3 +9,15 @@ grafana/storage/
 loki/wal/
 loki/index/
 loki/chunks/
+
+# Python
+backend/venv/
+__pycache__/
+
+# Node
+frontend/node_modules/
+
+# Logs and temp
+*.log
+*.tmp
+*.pyc
