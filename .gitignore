@@ -21,3 +21,9 @@ frontend/node_modules/
 *.log
 *.tmp
 *.pyc
+
+# backup files
+*.bak
+*~ 
+*.swp
+repo_before_prom_fix.tgz
