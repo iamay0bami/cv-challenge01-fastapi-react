@@ -1,29 +1,45 @@
-# Local secret envs
-backend/.env
-frontend/.env
+# Node / frontend build
+frontend/node_modules/
+frontend/dist/
+frontend/.env*
+frontend/nginx.default.conf.local
+
+# Python / backend
+__pycache__/
+*.pyc
 .env
 
-# positions / runtime
-promtail/positions.yaml
-grafana/storage/
+# Docker / local artifacts
+docker-compose.override.yml
+*.tgz
+*.tar.gz
+
+# Grafana & Loki runtime, DBs, backups
+grafana.db
+grafana.db*
+grafana_data*
+grafana_data_backup*
+grafana_db_*.sqlite3*
+grafana/*.sqlite3
+grafana/provisioning/dashboards/imports/
+grafana/imports/
+grafana/dashboards/
+
+loki/cache/
 loki/wal/
-loki/index/
-loki/chunks/
+loki/*.backup*/
+loki.backup*/
+loki/*.tgz
 
-# Python
-backend/venv/
-__pycache__/
-
-# Node
-frontend/node_modules/
-
-# Logs and temp
-*.log
-*.tmp
-*.pyc
-
-# backup files
-*.bak
+# Editor / temp files
 *~ 
 *.swp
-repo_before_prom_fix.tgz
+*.bak
+*.orig
+*.tmp
+*.retry
+*.log
+
+# Nginx certbot or local certs
+nginx/certbot/
+nginx/letsencrypt/
