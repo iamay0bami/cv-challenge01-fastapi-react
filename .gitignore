@@ -43,3 +43,7 @@ loki/*.tgz
 # Nginx certbot or local certs
 nginx/certbot/
 nginx/letsencrypt/
+
+# AWS
+.aws/
+awscliv2.zip
