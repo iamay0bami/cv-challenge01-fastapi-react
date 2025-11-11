@@ -44,6 +44,19 @@ loki/*.tgz
 nginx/certbot/
 nginx/letsencrypt/
 
-# AWS
-.aws/
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.backup
+
+# AWS CLI installers
 awscliv2.zip
+
+# Python and Ansible cache
+__pycache__/
+*.pyc
+*.retry
+
+# Docker
+*.log
+.env
